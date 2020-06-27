@@ -6,10 +6,6 @@ const yellow = document.getElementById("yellow");
 const green = document.getElementById("green");
 const FINAL_LEVEL = 10;
 
-function empezarJuego() {
-  game = new Game();
-}
-
 class Game {
   constructor() {
     this.startGame();
@@ -141,4 +137,8 @@ class Game {
       button: "Try Again",
     }).then(() => this.startGame(), this.removeEvents());
   }
+}
+
+function empezarJuego() {
+  game = new Game();
 }
