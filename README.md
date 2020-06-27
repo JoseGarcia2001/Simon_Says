@@ -8,5 +8,5 @@ In the process I learned concepts like:
 
 To create this game i used:
 - HTML5
-- CSS
+- CSS 3
 - JS VANILLA
