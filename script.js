@@ -1,32 +1,37 @@
-const celeste = document.getElementById("celeste");
-const violeta = document.getElementById("violeta");
-const naranja = document.getElementById("naranja");
-const verde = document.getElementById("verde");
-const btnEmpezar = document.getElementById("btnEmpezar");
-const ULTIMO_NIVEL = 1;
+const btnStart = document.getElementById("btnEmpezar");
+const levelUp = document.getElementById("level");
+const blue = document.getElementById("blue");
+const red = document.getElementById("red");
+const yellow = document.getElementById("yellow");
+const green = document.getElementById("green");
+const FINAL_LEVEL = 10;
 
-class Juego {
+function empezarJuego() {
+  game = new Game();
+}
+
+class Game {
   constructor() {
-    this.inicializar = this.inicializar.bind(this);
-    this.inicializar();
-    this.generarSecuencia();
-    setTimeout(this.siguienteNivel, 500);
+    this.startGame();
+    this.createSequence();
+    setTimeout(() => this.nextLevel(), 500);
   }
 
-  inicializar() {
-    this.toggleBtnEmpezar();
-    this.siguienteNivel = this.siguienteNivel.bind(this);
-    this.elegirColor = this.elegirColor.bind(this); //parametro agregado para no perder el context
-    this.nivel = 1;
-    this.colores = {
-      celeste,
-      violeta,
-      naranja,
-      verde,
+  startGame() {
+    this.btnStartGame();
+    this.gameValidation = this.gameValidation.bind(this);
+    this.nextLevel = this.nextLevel.bind(this);
+    this.turnOnSequence = this.turnOnSequence.bind(this);
+    this.level = 1;
+    this.colors = {
+      blue,
+      red,
+      yellow,
+      green,
     };
   }
 
-  toggleBtnEmpezar() {
+  btnStartGame() {
     if (btnEmpezar.classList.contains("hide")) {
       btnEmpezar.classList.remove("hide");
     } else {
@@ -34,108 +39,106 @@ class Juego {
     }
   }
 
-  generarSecuencia() {
-    this.secuencia = new Array(ULTIMO_NIVEL)
-      .fill(0)
+  createSequence() {
+    this.sequence = new Array(FINAL_LEVEL)
+      .fill(1)
       .map(() => Math.floor(Math.random() * 4));
   }
 
-  siguienteNivel() {
-    this.subnivel = 0;
-    this.iluminarSecuencia();
-    this.agregarEventosclick();
+  nextLevel() {
+    levelUp.innerHTML = `Level: ${this.level}`;
+    this.subLevel = 0;
+    this.turnOnSequence();
+    this.addEvents();
   }
 
-  iluminarSecuencia() {
-    for (var i = 0; i < this.nivel; i++) {
-      let color = this.trasformarNumeroaColor(this.secuencia[i]);
-      setTimeout(() => this.iluminarColor(color), 1000 * i);
+  turnOnSequence() {
+    for (var i = 0; i < this.level; i++) {
+      let color = this.changeNumberToColor(this.sequence[i]);
+      setTimeout(() => this.turnOnColor(color), 1000 * i);
     }
   }
 
-  trasformarNumeroaColor(numero) {
-    switch (numero) {
+  changeNumberToColor(number) {
+    switch (number) {
       case 0:
-        return "celeste";
+        return "blue";
       case 1:
-        return "violeta";
+        return "red";
       case 2:
-        return "naranja";
+        return "yellow";
       case 3:
-        return "verde";
+        return "green";
     }
   }
 
-  transformarColoraNumero(color) {
+  changeColorToNumber(color) {
     switch (color) {
-      case "celeste":
+      case "blue":
         return 0;
-      case "violeta":
+      case "red":
         return 1;
-      case "naranja":
+      case "yellow":
         return 2;
-      case "verde":
+      case "green":
         return 3;
     }
   }
 
-  iluminarColor(color) {
-    this.colores[color].classList.add("light");
-    setTimeout(() => this.apagarColor(color), 350);
+  turnOnColor(color) {
+    this.colors[color].classList.add("light");
+    setTimeout(() => this.colors[color].classList.remove("light"), 350);
   }
 
-  apagarColor(color) {
-    this.colores[color].classList.remove("light");
+  addEvents() {
+    this.colors.blue.addEventListener("click", this.gameValidation);
+    this.colors.red.addEventListener("click", this.gameValidation);
+    this.colors.yellow.addEventListener("click", this.gameValidation);
+    this.colors.green.addEventListener("click", this.gameValidation);
   }
 
-  agregarEventosclick() {
-    this.colores.celeste.addEventListener("click", this.elegirColor);
-    this.colores.verde.addEventListener("click", this.elegirColor);
-    this.colores.violeta.addEventListener("click", this.elegirColor);
-    this.colores.naranja.addEventListener("click", this.elegirColor);
+  removeEvents() {
+    this.colors.blue.removeEventListener("click", this.gameValidation);
+    this.colors.red.removeEventListener("click", this.gameValidation);
+    this.colors.yellow.removeEventListener("click", this.gameValidation);
+    this.colors.green.removeEventListener("click", this.gameValidation);
   }
 
-  eliminarEventosClick() {
-    this.colores.celeste.removeEventListener("click", this.elegirColor);
-    this.colores.verde.removeEventListener("click", this.elegirColor);
-    this.colores.violeta.removeEventListener("click", this.elegirColor);
-    this.colores.naranja.removeEventListener("click", this.elegirColor);
-  }
-
-  elegirColor(ev) {
-    const nombreColor = ev.target.dataset.color;
-    const numeroColor = this.transformarColoraNumero(nombreColor);
-    this.iluminarColor(nombreColor);
-    if (numeroColor === this.secuencia[this.subnivel]) {
-      this.subnivel++;
-      if (this.subnivel === this.nivel) {
-        this.nivel++;
-        this.eliminarEventosClick();
-        if (this.nivel === ULTIMO_NIVEL + 1) {
-          this.ganoElJuego();
+  gameValidation(event) {
+    const selectedColor = event.srcElement.id;
+    const selectedNumber = this.changeColorToNumber(selectedColor);
+    this.turnOnColor(selectedColor);
+    if (selectedNumber === this.sequence[this.subLevel]) {
+      this.subLevel++;
+      if (this.subLevel === this.level) {
+        this.level++;
+        this.removeEvents;
+        if (this.level === FINAL_LEVEL + 1) {
+          this.youWon();
         } else {
-          setTimeout(this.siguienteNivel, 2000);
+          setTimeout(this.nextLevel, 2000);
         }
       }
     } else {
-      this.perdioElJuego();
+      this.youLost();
     }
   }
 
-  ganoElJuego() {
-    swal("Simon Say", "Felicitaciones, ganaste el juego", "success").then(
-      this.inicializar
-    );
+  youWon() {
+    swal({
+      title: "Simon Says",
+      text: "Congratulations, You Won",
+      icon: "success",
+      button: "Play Again",
+    }).then(() => this.startGame(), this.removeEvents());
   }
 
-  perdioElJuego() {
-    swal("Simon Say", "Lo lamento, perdiste", "error").then(() => {
-      this.eliminarEventosClick();
-      this.inicializar();
-    });
+  youLost() {
+    swal({
+      title: "Simon Says",
+      text: "Sorry, you lost",
+      icon: "error",
+      button: "Try Again",
+    }).then(() => this.startGame(), this.removeEvents());
   }
-}
-
-function empezarJuego() {
-  window.juego = new Juego();
 }
