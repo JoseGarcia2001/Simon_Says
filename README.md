@@ -1,6 +1,6 @@
 # Simon_Says
 
-https://i.postimg.cc/gJrZGdXS/2020-11-24-15h35-31.png
+![alt text](https://i.postimg.cc/gJrZGdXS/2020-11-24-15h35-31.png) 
 
 The Simon Says game created to apply the concepts learned in the JavaScript Fundamentals Course.
 In the process I learned concepts like:
